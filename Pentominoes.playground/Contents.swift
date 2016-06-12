@@ -8,23 +8,23 @@ let board = Board(size: .FiveByTwelve)
 
 let tile = Tile(shape: .O)
 
-for boardSquare in board.squares() {
-    if board.canPositionTile(tile, atSquare: boardSquare) {
-        print("Can position at \(boardSquare)")
-    } 
-}
+//tile.rotate(true)
+//print("Rotated")
 
-tile.rotate(true)
-print("Rotated")
+board.positionTile(tile, atSquare: Square(row: 4, column: 6))
+board
 
-for boardSquare in board.squares() {
-    if board.canPositionTile(tile, atSquare: boardSquare) {
-        print("Can position at \(boardSquare)")
+for square in board.squares() {
+    if let tile = board.tileAtSquare(square) {
+        print(square)
     }
 }
 
-
-
-
-
+let tile2 = Tile(shape: .P)
+board.positionTile(tile2, atSquare: Square(row: 4, column: 8))
+board
+let tile3 = Tile(shape: .T)
+board.removeTile(tile3)
+board.removeTile(tile)
+board
 

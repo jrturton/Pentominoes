@@ -2,6 +2,19 @@ public class Board: PlayingGrid {
     
     private (set) public var rows: [[Bool]]
     
+    private let emptyBoard: [[Bool]]
+    
+    private struct PlacedTile {
+        let square: Square
+        let tile: Tile
+    }
+
+    private var placedTiles = [PlacedTile]() {
+        didSet {
+            updateRows()
+        }
+    }
+    
     public struct Size {
         let height: Int
         let width: Int
@@ -23,6 +36,7 @@ public class Board: PlayingGrid {
             rows += [paddingHorizontal + emptyRow + paddingHorizontal]
         }
         rows += fullPaddingVertical
+        emptyBoard = rows
     }
 }
 
@@ -31,7 +45,7 @@ extension Board {
         
         for tileSquare in tile.squares() {
             let boardSquare = tileSquare.offsetBy(atSquare)
-            if !squareWithinBoard(boardSquare) {
+            if !squareWithinGrid(boardSquare) {
                 return false
             }
             if tileSquare.occupied == true && squareOccupied(boardSquare) {
@@ -39,5 +53,49 @@ extension Board {
             }
         }
         return true
+    }
+    
+    public func positionTile(tile: Tile, atSquare square: Square) -> Bool {
+        if !canPositionTile(tile, atSquare: square) {
+            return false
+        }
+        placedTiles.append(PlacedTile(square: square, tile: tile))
+        return true
+    }
+    
+    public func tileAtSquare(square: Square) -> Tile? {
+        for placedTile in placedTiles {
+            let locationInTile = square.offsetBy(-placedTile.square)
+            if placedTile.tile.squareWithinGrid(locationInTile) {
+                let occupiedSquares = placedTile.tile.squares().filter { $0.occupied == true }
+                for tileSquare in occupiedSquares {
+                    if tileSquare == locationInTile {
+                        return placedTile.tile
+                    }
+                }
+            }
+        }
+        return nil
+    }
+    
+    public func removeTile(tile: Tile) -> Tile? {
+        if let index = placedTiles.indexOf( { $0.tile === tile } ){
+            placedTiles.removeAtIndex(index)
+            return tile
+        }
+        return nil
+    }
+}
+
+extension Board {
+    private func updateRows() {
+        rows = emptyBoard
+        for placedTile in placedTiles {
+            let occupiedSquares = placedTile.tile.squares().filter { $0.occupied == true }
+            for tileSquare in occupiedSquares {
+                let boardLocation = tileSquare.offsetBy(placedTile.square)
+                rows[boardLocation.row][boardLocation.column] = true
+            }
+        }
     }
 }

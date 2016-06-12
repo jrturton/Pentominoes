@@ -37,8 +37,15 @@ public struct Square {
     
     func offsetBy(square: Square) -> Square {
         return Square(row: self.row + square.row, column: self.column + square.column)
-        
     }
+}
+
+public prefix func -(square: Square) -> Square {
+    return Square(row: -square.row, column: -square.column)
+}
+
+public func ==(left: Square, right: Square) -> Bool {
+    return left.row == right.row && left.column == right.column
 }
 
 public class GridSquareGenerator: GeneratorType {
@@ -94,8 +101,8 @@ extension PlayingGrid {
         }
     }
     
-    public func squareWithinBoard(square: Square) -> Bool {
-        return square.row < rows.count && square.column < rows[square.row].count
+    public func squareWithinGrid(square: Square) -> Bool {
+        return square.row >= 0 && square.column >= 0 && square.row < rows.count && square.column < rows[square.row].count
     }
         
     public func squareOccupied(square: Square) -> Bool {
