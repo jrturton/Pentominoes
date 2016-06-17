@@ -67,8 +67,7 @@ extension Board {
         for placedTile in placedTiles {
             let locationInTile = square.offsetBy(-placedTile.square)
             if placedTile.tile.squareWithinGrid(locationInTile) {
-                let occupiedSquares = placedTile.tile.squares().filter { $0.occupied == true }
-                for tileSquare in occupiedSquares {
+                for tileSquare in placedTile.tile.occupiedSquares() {
                     if tileSquare == locationInTile {
                         return placedTile.tile
                     }
@@ -91,8 +90,7 @@ extension Board {
     private func updateRows() {
         rows = emptyBoard
         for placedTile in placedTiles {
-            let occupiedSquares = placedTile.tile.squares().filter { $0.occupied == true }
-            for tileSquare in occupiedSquares {
+            for tileSquare in placedTile.tile.occupiedSquares() {
                 let boardLocation = tileSquare.offsetBy(placedTile.square)
                 rows[boardLocation.row][boardLocation.column] = true
             }

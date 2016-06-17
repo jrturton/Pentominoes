@@ -25,9 +25,9 @@ extension PlayingGrid where Self: protocol<CustomStringConvertible, CustomPlaygr
 
 
 public struct Square {
-    let row: Int
-    let column: Int
-    let occupied: Bool?
+    public let row: Int
+    public let column: Int
+    public let occupied: Bool?
     
     public init(row: Int, column: Int, occupied: Bool? = nil) {
         self.row = row
@@ -90,6 +90,9 @@ public class GridSquareSequence: SequenceType {
 extension PlayingGrid {
     public func squares() -> GridSquareSequence {
         return GridSquareSequence(grid: self)
+    }
+    public func occupiedSquares() -> [Square] {
+        return squares().filter{ $0.occupied == true }
     }
 }
 
