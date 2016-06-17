@@ -2,7 +2,7 @@ public class Tile: PlayingGrid {
     
     private (set) public var rows: [[Bool]]
     
-    public init(shape: Shapes) {
+    public init(shape: Shape) {
         rows = shape.stringMap.map {
             return $0.characters.map { $0 == "#" }
         }
@@ -36,7 +36,7 @@ public func transpose<T>(input: [[T]]) -> [[T]] {
     return out
 }
 
-public enum Shapes: Int {
+public enum Shape: Int {
     case O = 0
     case P = 1
     case Q = 2

@@ -1,6 +1,22 @@
+import UIKit
+
 public protocol PlayingGrid : CustomStringConvertible, CustomPlaygroundQuickLookable {
     var rows: [[Bool]] { get }
     subscript(row: Int) -> [Bool] { get }
+    func sizeForGridSize(gridSize: CGFloat) -> CGRect
+    func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint
+}
+
+extension PlayingGrid {
+    public func sizeForGridSize(gridSize: CGFloat) -> CGRect {
+        let height = CGFloat(rows.count)
+        let width = CGFloat(rows.first?.count ?? 0)
+        return CGRect(origin: .zero, size: CGSize(width: gridSize * width, height: gridSize * height))
+    }
+    
+    public func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint {
+        return CGPoint(x: CGFloat(square.column) * gridSize, y: CGFloat(square.row) * gridSize)
+    }
 }
 
 extension Bool {
