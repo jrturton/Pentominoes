@@ -123,9 +123,30 @@ extension PlayingGrid {
     public func squareWithinGrid(square: Square) -> Bool {
         return square.row >= 0 && square.column >= 0 && square.row < rows.count && square.column < rows[square.row].count
     }
-        
+    
     public func squareOccupied(square: Square) -> Bool {
         return self[square.row][square.column]
+    }
+}
+
+extension PlayingGrid {
+    
+    public func pathForSquares(occupied: Bool, gridSize: CGFloat) -> CGPath {
+        
+        let squaresForPath = squares().filter { $0.occupied == occupied }
+        
+        let rects : [CGRect] = squaresForPath.map { square in
+            let originX = CGFloat(square.column) * gridSize
+            let originY = CGFloat(square.row) * gridSize
+            return CGRect(x: originX, y: originY, width: gridSize, height: gridSize)
+        }
+        
+        let path : UIBezierPath = rects.reduce(UIBezierPath()) { path, rect in
+            path.appendPath(UIBezierPath(rect: rect))
+            return path
+        }
+        
+        return path.CGPath
     }
 }
 

@@ -26,22 +26,11 @@ public class TileView: UIView {
     }
     
     private func tilePath() -> CGPath {
-        let rects : [CGRect] = tile.occupiedSquares().map { square in
-            let originX = CGFloat(square.column) * gridSize
-            let originY = CGFloat(square.row) * gridSize
-            return CGRect(x: originX, y: originY, width: gridSize, height: gridSize)
-        }
-        
-        let paths : [UIBezierPath] = rects.map {
-            return UIBezierPath(rect: $0)
-        }
-        let path = UIBezierPath()
-        paths.forEach { path.appendPath($0) }
-        return path.CGPath
+        return tile.pathForSquares(true, gridSize: gridSize)
     }
     
     func rotate(clockwise: Bool) {
-        UIView.animateWithDuration(0.4, animations: {
+        UIView.animateWithDuration(0.1, animations: {
             self.transform = CGAffineTransformMakeRotation(clockwise ? CGFloat(M_PI_2) : CGFloat(-M_PI_2))
             }, completion: { _ in
                 self.transform = CGAffineTransformIdentity
