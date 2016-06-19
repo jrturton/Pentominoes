@@ -1,8 +1,6 @@
-//: Playground - noun: a place where people can play
 import UIKit
-import XCPlayground
 
-public class PentominoViewController: UIViewController {
+public class PentominoesViewController: UIViewController {
     
     private let gridSize: CGFloat = 30
     var boardView: BoardView!
@@ -34,7 +32,7 @@ public class PentominoViewController: UIViewController {
             }
             switch index {
             case 0...4 :
-               tileView.center.x = (view.bounds.width / 6 * CGFloat(index + 1))
+                tileView.center.x = (view.bounds.width / 6 * CGFloat(index + 1))
                 tileView.center.y = tileView.bounds.height
             case 5:
                 tileView.center.x = view.bounds.width / 6
@@ -51,15 +49,3 @@ public class PentominoViewController: UIViewController {
         }
     }
 }
-
-let controller = PentominoViewController()
-let board = Board(size: .SixByTen)
-let tiles = (0..<12).map { Tile(shape: Shape(rawValue: $0)!) }
-controller.board = board
-controller.tiles = tiles
-XCPlaygroundPage.currentPage.liveView = controller
-controller.view.frame = CGRect(x: 0, y: 0, width: 1000, height: 700)
-controller.viewDidLayoutSubviews()
-controller.view
-
-
