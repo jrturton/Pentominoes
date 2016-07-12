@@ -2,7 +2,10 @@ import UIKit
 
 public class PentominoesViewController: UIViewController {
     
-    private let gridSize: CGFloat = 30
+    @IBOutlet var tap: UITapGestureRecognizer!
+    @IBOutlet var pan: UIPanGestureRecognizer!
+    
+    private let gridSize: CGFloat = 35
     var boardView: BoardView!
     var tileViews: [TileView]!
     public var board: Board! {
@@ -47,5 +50,61 @@ public class PentominoesViewController: UIViewController {
             
             
         }
+    }
+    
+    var activeTile: TileView? {
+        willSet {
+            if let oldActiveTile = activeTile {
+                oldActiveTile.lifted = false
+                oldActiveTile.layer.zPosition = 0
+            }
+        }
+        didSet {
+            if let newActiveTile = activeTile {
+                newActiveTile.lifted = true
+                newActiveTile.layer.zPosition = 10
+            }
+        }
+    }
+    
+    @IBAction func handleTap(sender: UITapGestureRecognizer) {
+        activeTile?.rotate(true)
+    }
+    
+    @IBAction func handlePan(sender: UIPanGestureRecognizer) {
+        var fingerClearedLocation = sender.locationInView(view)
+        fingerClearedLocation.y -= (activeTile?.bounds.height ?? 0.0) * 0.5
+        switch sender.state {
+        case .Began:
+            UIView.animateWithDuration(0.1) { self.activeTile?.center = fingerClearedLocation }
+        case .Changed:
+            activeTile?.center = fingerClearedLocation
+        case .Ended, .Cancelled:
+            // TODO: put it down in a permissible place
+            activeTile = nil
+        default:
+            break
+        }
+    }
+    
+    
+    
+}
+
+extension PentominoesViewController: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
+    }
+    
+    public func gestureRecognizerShouldBegin(gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer != pan {
+            return true
+        }
+        let location = gestureRecognizer.locationInView(view)
+        if let hitTile = view.hitTest(location, withEvent: nil) as? TileView {
+            activeTile = hitTile
+            return true
+        }
+        return false
     }
 }

@@ -17,9 +17,30 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="zzi-L9-7Va" appends="YES" id="5Rz-MP-lCt"/>
+                            <outletCollection property="gestureRecognizers" destination="5gy-Pc-Dai" appends="YES" id="9ve-IB-loS"/>
+                        </connections>
                     </view>
+                    <connections>
+                        <outlet property="pan" destination="5gy-Pc-Dai" id="5XS-9t-SRU"/>
+                        <outlet property="tap" destination="zzi-L9-7Va" id="tQd-Vs-0Vu"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <tapGestureRecognizer id="zzi-L9-7Va">
+                    <connections>
+                        <action selector="handleTap:" destination="BYZ-38-t0r" id="LdE-hu-pgC"/>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="FoT-mt-wOf"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <panGestureRecognizer minimumNumberOfTouches="1" maximumNumberOfTouches="1" id="5gy-Pc-Dai">
+                    <connections>
+                        <action selector="handlePan:" destination="BYZ-38-t0r" id="4ru-Ld-i89"/>
+                        <outlet property="delegate" destination="BYZ-38-t0r" id="EXE-kg-iQR"/>
+                    </connections>
+                </panGestureRecognizer>
             </objects>
         </scene>
     </scenes>
