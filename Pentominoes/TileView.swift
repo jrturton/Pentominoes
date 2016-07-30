@@ -9,7 +9,7 @@ public class TileView: UIView {
         return layer as! CAShapeLayer
     }
     
-    private let tile: Tile
+    let tile: Tile
     private let gridSize: CGFloat
     
     public init(tile: Tile, color: UIColor = UIColor.whiteColor(), gridSize: CGFloat = 20.0) {

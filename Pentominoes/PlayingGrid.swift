@@ -5,6 +5,7 @@ public protocol PlayingGrid : CustomStringConvertible, CustomPlaygroundQuickLook
     subscript(row: Int) -> [Bool] { get }
     func sizeForGridSize(gridSize: CGFloat) -> CGRect
     func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint
+    func squareAtPoint(point: CGPoint, gridSize: CGFloat) -> Square
 }
 
 extension PlayingGrid {
@@ -16,6 +17,14 @@ extension PlayingGrid {
     
     public func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint {
         return CGPoint(x: CGFloat(square.column) * gridSize, y: CGFloat(square.row) * gridSize)
+    }
+    public func pointAtCenterOfSquare(square: Square, gridSize: CGFloat) -> CGPoint {
+        return CGPoint(x: CGFloat(square.column) * gridSize + gridSize * 0.5, y: CGFloat(square.row) * gridSize * 0.5)
+    }
+    public func squareAtPoint(point: CGPoint, gridSize: CGFloat) -> Square {
+        let row = Int(floor(point.y / gridSize))
+        let column = Int(floor(point.x / gridSize))
+        return Square(row: row, column: column)
     }
 }
 
@@ -109,6 +118,19 @@ extension PlayingGrid {
     }
     public func occupiedSquares() -> [Square] {
         return squares().filter{ $0.occupied == true }
+    }
+    public func squaresSurrounding(square: Square) -> [Square] {
+        let firstSurroundingRow = square.row - 1
+        let firstSurroundingColumn = square.column - 1
+        
+        var squares = [Square]()
+        for columnAdjust in 0..<3 {
+            for rowAdjust in 0..<3 {
+                squares.append(Square(row: firstSurroundingRow + rowAdjust, column: firstSurroundingColumn + columnAdjust))
+            }
+        }
+                
+        return squares
     }
 }
 

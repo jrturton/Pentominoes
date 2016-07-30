@@ -18,6 +18,7 @@
 		7905FAA51D173F28001F5742 /* Tile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7905FAA01D173F28001F5742 /* Tile.swift */; };
 		7905FAA61D173F28001F5742 /* TileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7905FAA11D173F28001F5742 /* TileView.swift */; };
 		7905FAAA1D173F91001F5742 /* PentominoesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7905FAA91D173F91001F5742 /* PentominoesViewController.swift */; };
+		79D500971D4BDEBC00D6D592 /* UIView+Relocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D500961D4BDEBC00D6D592 /* UIView+Relocator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		7905FAA01D173F28001F5742 /* Tile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tile.swift; sourceTree = "<group>"; };
 		7905FAA11D173F28001F5742 /* TileView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TileView.swift; sourceTree = "<group>"; };
 		7905FAA91D173F91001F5742 /* PentominoesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PentominoesViewController.swift; sourceTree = "<group>"; };
+		79D500961D4BDEBC00D6D592 /* UIView+Relocator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Relocator.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +125,7 @@
 			children = (
 				7905FA9E1D173F28001F5742 /* BoardView.swift */,
 				7905FAA11D173F28001F5742 /* TileView.swift */,
+				79D500961D4BDEBC00D6D592 /* UIView+Relocator.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -228,6 +231,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79D500971D4BDEBC00D6D592 /* UIView+Relocator.swift in Sources */,
 				7905FAAA1D173F91001F5742 /* PentominoesViewController.swift in Sources */,
 				7905FAA31D173F28001F5742 /* BoardView.swift in Sources */,
 				7905FAA21D173F28001F5742 /* Board.swift in Sources */,

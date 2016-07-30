@@ -1,11 +1,12 @@
 public class Tile: PlayingGrid {
     
     private (set) public var rows: [[Bool]]
-    
+    let shape: Shape
     public init(shape: Shape) {
         rows = shape.stringMap.map {
             return $0.characters.map { $0 == "#" }
         }
+        self.shape = shape
     }
     
     public func rotate(clockwise: Bool) {

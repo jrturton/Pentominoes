@@ -1,3 +1,5 @@
+import CoreGraphics
+
 public class Board: PlayingGrid {
     
     private (set) public var rows: [[Bool]]
@@ -41,6 +43,31 @@ public class Board: PlayingGrid {
 }
 
 extension Board {
+    
+    public func allowedDropLocation(tile: Tile, atPoint point: CGPoint, gridSize: CGFloat) -> Square? {
+        let potentialSquare = squareAtPoint(point, gridSize: gridSize)
+        var allowedDropLocation: Square?
+        if canPositionTile(tile, atSquare: potentialSquare) {
+            allowedDropLocation = potentialSquare
+        } else {
+            var distanceToDropPoint = CGFloat.max
+            for square in squaresSurrounding(potentialSquare) {
+                if canPositionTile(tile, atSquare: square) {
+                    let center = pointAtCenterOfSquare(square, gridSize: gridSize)
+                    let xDistance = center.x - point.x
+                    let yDistance = center.y - point.y
+                    // No need to sqrt since we're just comparing
+                    let distance = (xDistance * xDistance) + (yDistance * yDistance)
+                    if distance < distanceToDropPoint {
+                        distanceToDropPoint = distance
+                        allowedDropLocation = square
+                    }
+                }
+            }
+        }
+        return allowedDropLocation
+    }
+    
     public func canPositionTile(tile: Tile, atSquare: Square) -> Bool {
         
         for tileSquare in tile.squares() {

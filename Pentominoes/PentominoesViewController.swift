@@ -29,8 +29,12 @@ public class PentominoesViewController: UIViewController {
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         boardView.center = view.center
+        positionTiles()
+    }
+    
+    private func positionTiles() {
         for (index, tileView) in tileViews.enumerate() {
-            if tileView.superview != view {
+            if tileView.superview != view || tileView == activeTile {
                 continue
             }
             switch index {
@@ -47,8 +51,6 @@ public class PentominoesViewController: UIViewController {
                 tileView.center.x = (view.bounds.width / 6 * CGFloat(index - 6))
                 tileView.center.y = view.bounds.height - tileView.bounds.height
             }
-            
-            
         }
     }
     
@@ -60,10 +62,15 @@ public class PentominoesViewController: UIViewController {
             }
         }
         didSet {
+            boardView.dropPath = activeTile?.tile.pathForSquares(true, gridSize: gridSize)
             if let newActiveTile = activeTile {
                 newActiveTile.lifted = true
                 newActiveTile.layer.zPosition = 10
-            }
+                if newActiveTile.superview != view {
+                    view.addSubviewPreservingLocation(newActiveTile)
+                    board.removeTile(newActiveTile.tile)
+                }
+            } 
         }
     }
     
@@ -72,23 +79,43 @@ public class PentominoesViewController: UIViewController {
     }
     
     @IBAction func handlePan(sender: UIPanGestureRecognizer) {
+        
+        guard let activeTile = activeTile else { return }
         var fingerClearedLocation = sender.locationInView(view)
-        fingerClearedLocation.y -= (activeTile?.bounds.height ?? 0.0) * 0.5
+        fingerClearedLocation.y -= (activeTile.bounds.height ?? 0.0) * 0.5
         switch sender.state {
         case .Began:
-            UIView.animateWithDuration(0.1) { self.activeTile?.center = fingerClearedLocation }
+            UIView.animateWithDuration(0.1) { activeTile.center = fingerClearedLocation }
         case .Changed:
-            activeTile?.center = fingerClearedLocation
+            activeTile.center = fingerClearedLocation
+            let locationOnBoard = boardView.convertPoint(activeTile.bounds.origin, fromView: activeTile)
+            if let allowedDropLocation = board.allowedDropLocation(activeTile.tile, atPoint:locationOnBoard, gridSize: gridSize) {
+                let squareOrigin = board.pointAtOriginOfSquare(allowedDropLocation, gridSize: gridSize)
+                boardView.showDropPathAtOrigin(squareOrigin)
+            } else {
+                boardView.showDropPathAtOrigin(nil)
+            }
         case .Ended, .Cancelled:
-            // TODO: put it down in a permissible place
-            activeTile = nil
+            let locationOnBoard = boardView.convertPoint(activeTile.bounds.origin, fromView: activeTile)
+            let allowedDropLocation = board.allowedDropLocation(activeTile.tile, atPoint:locationOnBoard, gridSize: gridSize)
+            
+            self.activeTile = nil
+            
+            if let allowedDropLocation = allowedDropLocation {
+                board.positionTile(activeTile.tile, atSquare: allowedDropLocation)
+                boardView.addSubviewPreservingLocation(activeTile)
+                UIView.animateWithDuration(0.1) {
+                    activeTile.frame.origin = self.board.pointAtOriginOfSquare(allowedDropLocation, gridSize: self.gridSize)
+                }
+            } else {
+                UIView.animateWithDuration(0.25) {
+                    self.positionTiles()
+                }
+            }
         default:
             break
         }
     }
-    
-    
-    
 }
 
 extension PentominoesViewController: UIGestureRecognizerDelegate {
