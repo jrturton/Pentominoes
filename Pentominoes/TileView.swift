@@ -30,11 +30,11 @@ public class TileView: UIView {
     }
     
     func rotate(clockwise: Bool) {
+        self.tile.rotate(clockwise)
         UIView.animateWithDuration(0.1, animations: {
             self.transform = CGAffineTransformMakeRotation(clockwise ? CGFloat(M_PI_2) : CGFloat(-M_PI_2))
             }, completion: { _ in
                 self.transform = CGAffineTransformIdentity
-                self.tile.rotate(clockwise)
                 self.shapeLayer.path = self.tilePath()
         })
     }

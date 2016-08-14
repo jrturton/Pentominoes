@@ -76,6 +76,7 @@ public class PentominoesViewController: UIViewController {
     
     @IBAction func handleTap(sender: UITapGestureRecognizer) {
         activeTile?.rotate(true)
+        boardView.dropPath = activeTile?.tile.pathForSquares(true, gridSize: gridSize)
     }
     
     @IBAction func handlePan(sender: UIPanGestureRecognizer) {

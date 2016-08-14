@@ -53,9 +53,9 @@ extension Board {
             var distanceToDropPoint = CGFloat.max
             for square in squaresSurrounding(potentialSquare) {
                 if canPositionTile(tile, atSquare: square) {
-                    let center = pointAtCenterOfSquare(square, gridSize: gridSize)
-                    let xDistance = center.x - point.x
-                    let yDistance = center.y - point.y
+                    let origin = pointAtOriginOfSquare(square, gridSize: gridSize)
+                    let xDistance = origin.x - point.x
+                    let yDistance = origin.y - point.y
                     // No need to sqrt since we're just comparing
                     let distance = (xDistance * xDistance) + (yDistance * yDistance)
                     if distance < distanceToDropPoint {

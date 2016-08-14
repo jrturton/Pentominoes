@@ -39,9 +39,11 @@ extension BoardView {
     
     var dropPath: CGPath? {
         set {
+            let origin = highlightLayer.position
             CATransaction.begin()
             CATransaction.setDisableActions(true)
             highlightLayer.path = newValue
+            highlightLayer.position = origin  
             CATransaction.commit()
         }
         get {
