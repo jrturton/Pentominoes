@@ -21,6 +21,10 @@ open class TileView: UIView {
         shapeLayer.path = tilePath()
     }
     
+    func randomiseColor() {
+        shapeLayer.fillColor = randomColor().cgColor
+    }
+    
     required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

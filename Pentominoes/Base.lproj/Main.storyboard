@@ -20,8 +20,33 @@
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="1024" height="768"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="SaM-U1-pby">
+                                <rect key="frame" x="943" y="40" width="61" height="70"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MZQ-Gh-SxS">
+                                        <rect key="frame" x="0.0" y="0.0" width="61" height="30"/>
+                                        <state key="normal" title="Reset"/>
+                                        <connections>
+                                            <action selector="reset:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tPG-yI-mB7"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0ai-be-B3f">
+                                        <rect key="frame" x="0.0" y="40" width="61" height="30"/>
+                                        <state key="normal" title="Recolour"/>
+                                        <connections>
+                                            <action selector="recolour:" destination="BYZ-38-t0r" eventType="touchUpInside" id="FtQ-ck-aPO"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
+                        </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <gestureRecognizers/>
+                        <constraints>
+                            <constraint firstItem="SaM-U1-pby" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="20" id="5Le-d4-9wO"/>
+                            <constraint firstAttribute="trailing" secondItem="SaM-U1-pby" secondAttribute="trailing" constant="20" id="Z1E-9m-86l"/>
+                        </constraints>
                         <connections>
                             <outletCollection property="gestureRecognizers" destination="zzi-L9-7Va" appends="YES" id="5Rz-MP-lCt"/>
                             <outletCollection property="gestureRecognizers" destination="5gy-Pc-Dai" appends="YES" id="9ve-IB-loS"/>

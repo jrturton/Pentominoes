@@ -2,9 +2,11 @@ import UIKit
 
 open class PentominoesViewController: UIViewController {
     
+    //MARK: Outlets
     @IBOutlet var tap: UITapGestureRecognizer!
     @IBOutlet var pan: UIPanGestureRecognizer!
     
+    //MARK: Properties
     fileprivate let gridSize: CGFloat = 35
     var boardView: BoardView!
     var tileViews: [TileView]!
@@ -19,9 +21,10 @@ open class PentominoesViewController: UIViewController {
         }
     }
     
+    //MARK: UIViewController
     open override func viewDidLoad() {
         super.viewDidLoad()
-        print(view)
+        
         view.addSubview(boardView)
         tileViews.forEach { view.addSubview($0) }
     }
@@ -72,6 +75,32 @@ open class PentominoesViewController: UIViewController {
                 }
             } 
         }
+    }
+    
+    @IBAction func reset(_ sender: Any) {
+        let alert = UIAlertController(title: "Reset", message: "Start again?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { _ in
+            self.resetGame()
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func recolour(_ sender: Any) {
+        self.tileViews.forEach { $0.randomiseColor() }
+    }
+    
+    private func resetGame() {
+        for tileView in tileViews {
+            if tileView.superview != view {
+                view.addSubviewPreservingLocation(tileView)
+                let _ = board.remove(tileView.tile)
+            }
+        }
+       
+        UIView.animate(withDuration: 1, delay: 0, usingSpringWithDamping: 0.6, initialSpringVelocity: -10, options: [], animations: {
+            self.positionTiles()
+        }, completion: nil)
     }
     
     @IBAction func handleTap(_ sender: UITapGestureRecognizer) {
