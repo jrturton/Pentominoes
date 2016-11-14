@@ -9,8 +9,8 @@
 import UIKit
 
 extension UIView {
-    func addSubviewPreservingLocation(view: UIView) {
-        let centerInSelf = self.convertPoint(view.center, fromView: view.superview)
+    func addSubviewPreservingLocation(_ view: UIView) {
+        let centerInSelf = self.convert(view.center, from: view.superview)
         self.addSubview(view)
         view.center = centerInSelf
     }

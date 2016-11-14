@@ -1,23 +1,23 @@
 import UIKit
 
-public class TileView: UIView {
-    public override class func layerClass() -> AnyClass {
+open class TileView: UIView {
+    open override class var layerClass : AnyClass {
         return CAShapeLayer.self
     }
     
-    private var shapeLayer: CAShapeLayer {
+    fileprivate var shapeLayer: CAShapeLayer {
         return layer as! CAShapeLayer
     }
     
     let tile: Tile
-    private let gridSize: CGFloat
+    fileprivate let gridSize: CGFloat
     
-    public init(tile: Tile, color: UIColor = UIColor.whiteColor(), gridSize: CGFloat = 20.0) {
+    public init(tile: Tile, color: UIColor = UIColor.white, gridSize: CGFloat = 20.0) {
         self.tile = tile
         self.gridSize = gridSize
         super.init(frame:tile.sizeForGridSize(gridSize))
-        shapeLayer.strokeColor = UIColor.grayColor().CGColor
-        shapeLayer.fillColor = color.CGColor
+        shapeLayer.strokeColor = UIColor.gray.cgColor
+        shapeLayer.fillColor = color.cgColor
         shapeLayer.path = tilePath()
     }
     
@@ -25,25 +25,25 @@ public class TileView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func tilePath() -> CGPath {
+    fileprivate func tilePath() -> CGPath {
         return tile.pathForSquares(true, gridSize: gridSize)
     }
     
-    func rotate(clockwise: Bool) {
+    func rotate(_ clockwise: Bool) {
         self.tile.rotate(clockwise)
-        UIView.animateWithDuration(0.1, animations: {
-            self.transform = CGAffineTransformMakeRotation(clockwise ? CGFloat(M_PI_2) : CGFloat(-M_PI_2))
+        UIView.animate(withDuration: 0.1, animations: {
+            self.transform = CGAffineTransform(rotationAngle: clockwise ? CGFloat(M_PI_2) : CGFloat(-M_PI_2))
             }, completion: { _ in
-                self.transform = CGAffineTransformIdentity
+                self.transform = CGAffineTransform.identity
                 self.shapeLayer.path = self.tilePath()
         })
     }
     
-    public var lifted: Bool = false {
+    open var lifted: Bool = false {
         didSet {
             layer.shadowRadius = 5.0
             layer.shadowOffset = .zero
-            layer.shadowColor = UIColor.blackColor().CGColor
+            layer.shadowColor = UIColor.black.cgColor
             layer.shadowOpacity = lifted ? 0.5 : 0.0
         }
     }

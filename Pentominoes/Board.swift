@@ -1,17 +1,17 @@
 import CoreGraphics
 
-public class Board: PlayingGrid {
+open class Board: PlayingGrid {
     
-    private (set) public var rows: [[Bool]]
+    fileprivate (set) open var rows: [[Bool]]
     
-    private let emptyBoard: [[Bool]]
+    fileprivate let emptyBoard: [[Bool]]
     
-    private struct PlacedTile {
+    fileprivate struct PlacedTile {
         let square: Square
         let tile: Tile
     }
 
-    private var placedTiles = [PlacedTile]() {
+    fileprivate var placedTiles = [PlacedTile]() {
         didSet {
             updateRows()
         }
@@ -29,10 +29,10 @@ public class Board: PlayingGrid {
     
     public init(size: Size) {
         // Extend by four "occupied" positions in every direction
-        let paddingHorizontal = [Bool].init(count: 4, repeatedValue: true)
-        let paddingVertical = [Bool].init(count: 8 + size.width, repeatedValue: true)
-        let fullPaddingVertical = [[Bool]].init(count: 4, repeatedValue: paddingVertical)
-        let emptyRow = [Bool].init(count: size.width, repeatedValue: false)
+        let paddingHorizontal = [Bool].init(repeating: true, count: 4)
+        let paddingVertical = [Bool].init(repeating: true, count: 8 + size.width)
+        let fullPaddingVertical = [[Bool]].init(repeating: paddingVertical, count: 4)
+        let emptyRow = [Bool].init(repeating: false, count: size.width)
         rows = fullPaddingVertical
         for _ in 0..<size.height {
             rows += [paddingHorizontal + emptyRow + paddingHorizontal]
@@ -44,13 +44,13 @@ public class Board: PlayingGrid {
 
 extension Board {
     
-    public func allowedDropLocation(tile: Tile, atPoint point: CGPoint, gridSize: CGFloat) -> Square? {
+    public func allowedDropLocation(_ tile: Tile, atPoint point: CGPoint, gridSize: CGFloat) -> Square? {
         let potentialSquare = squareAtPoint(point, gridSize: gridSize)
         var allowedDropLocation: Square?
         if canPositionTile(tile, atSquare: potentialSquare) {
             allowedDropLocation = potentialSquare
         } else {
-            var distanceToDropPoint = CGFloat.max
+            var distanceToDropPoint = CGFloat.greatestFiniteMagnitude
             for square in squaresSurrounding(potentialSquare) {
                 if canPositionTile(tile, atSquare: square) {
                     let origin = pointAtOriginOfSquare(square, gridSize: gridSize)
@@ -68,7 +68,7 @@ extension Board {
         return allowedDropLocation
     }
     
-    public func canPositionTile(tile: Tile, atSquare: Square) -> Bool {
+    public func canPositionTile(_ tile: Tile, atSquare: Square) -> Bool {
         
         for tileSquare in tile.squares() {
             let boardSquare = tileSquare.offsetBy(atSquare)
@@ -82,7 +82,7 @@ extension Board {
         return true
     }
     
-    public func positionTile(tile: Tile, atSquare square: Square) -> Bool {
+    public func positionTile(_ tile: Tile, atSquare square: Square) -> Bool {
         if !canPositionTile(tile, atSquare: square) {
             return false
         }
@@ -90,7 +90,7 @@ extension Board {
         return true
     }
     
-    public func tileAtSquare(square: Square) -> Tile? {
+    public func tileAtSquare(_ square: Square) -> Tile? {
         for placedTile in placedTiles {
             let locationInTile = square.offsetBy(-placedTile.square)
             if placedTile.tile.squareWithinGrid(locationInTile) {
@@ -104,9 +104,9 @@ extension Board {
         return nil
     }
     
-    public func removeTile(tile: Tile) -> Tile? {
-        if let index = placedTiles.indexOf( { $0.tile === tile } ){
-            placedTiles.removeAtIndex(index)
+    public func removeTile(_ tile: Tile) -> Tile? {
+        if let index = placedTiles.index( where: { $0.tile === tile } ){
+            placedTiles.remove(at: index)
             return tile
         }
         return nil
@@ -114,7 +114,7 @@ extension Board {
 }
 
 extension Board {
-    private func updateRows() {
+    fileprivate func updateRows() {
         rows = emptyBoard
         for placedTile in placedTiles {
             for tileSquare in placedTile.tile.occupiedSquares() {

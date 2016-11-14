@@ -1,6 +1,6 @@
-public class Tile: PlayingGrid {
+open class Tile: PlayingGrid {
     
-    private (set) public var rows: [[Bool]]
+    fileprivate (set) open var rows: [[Bool]]
     let shape: Shape
     public init(shape: Shape) {
         rows = shape.stringMap.map {
@@ -9,7 +9,7 @@ public class Tile: PlayingGrid {
         self.shape = shape
     }
     
-    public func rotate(clockwise: Bool) {
+    open func rotate(_ clockwise: Bool) {
         
         if !clockwise {
             reverseRows()
@@ -19,17 +19,17 @@ public class Tile: PlayingGrid {
             reverseRows()
         }
     }
-    private func reverseRows() {
-        rows = rows.map { $0.reverse() }
+    fileprivate func reverseRows() {
+        rows = rows.map { $0.reversed() }
     }
 }
 
-public func transpose<T>(input: [[T]]) -> [[T]] {
+public func transpose<T>(_ input: [[T]]) -> [[T]] {
     if input.isEmpty { return [[T]]() }
     let count = input[0].count
-    var out = [[T]](count: count, repeatedValue: [T]())
+    var out = [[T]](repeating: [T](), count: count)
     for outer in input {
-        for (index, inner) in outer.enumerate() {
+        for (index, inner) in outer.enumerated() {
             out[index].append(inner)
         }
     }
@@ -38,22 +38,22 @@ public func transpose<T>(input: [[T]]) -> [[T]] {
 }
 
 public enum Shape: Int {
-    case O = 0
-    case P = 1
-    case Q = 2
-    case R = 3
-    case S = 4
-    case T = 5
-    case U = 6
-    case V = 7
-    case W = 8
-    case X = 9
-    case Y = 10
-    case Z = 11
+    case o = 0
+    case p = 1
+    case q = 2
+    case r = 3
+    case s = 4
+    case t = 5
+    case u = 6
+    case v = 7
+    case w = 8
+    case x = 9
+    case y = 10
+    case z = 11
     
     var stringMap: [String] {
         switch self {
-        case O:
+        case .o:
             return [
                 "__#__",
                 "__#__",
@@ -61,7 +61,7 @@ public enum Shape: Int {
                 "__#__",
                 "__#__"
             ]
-        case P:
+        case .p:
             return [
                 "_____",
                 "__##_",
@@ -69,7 +69,7 @@ public enum Shape: Int {
                 "__#__",
                 "_____"
             ]
-        case Q:
+        case .q:
             return [
                 "_____",
                 "_##__",
@@ -77,7 +77,7 @@ public enum Shape: Int {
                 "__#__",
                 "__#__"
             ]
-        case R:
+        case .r:
             return [
                 "_____",
                 "__##_",
@@ -85,7 +85,7 @@ public enum Shape: Int {
                 "__#__",
                 "_____"
             ]
-        case S:
+        case .s:
             return [
                 "_____",
                 "_____",
@@ -93,7 +93,7 @@ public enum Shape: Int {
                 "_###_",
                 "_____"
             ]
-        case T:
+        case .t:
             return [
                 "_____",
                 "_###_",
@@ -101,7 +101,7 @@ public enum Shape: Int {
                 "__#__",
                 "_____"
             ]
-        case U:
+        case .u:
             return [
                 "_____",
                 "_____",
@@ -109,7 +109,7 @@ public enum Shape: Int {
                 "_###_",
                 "_____"
             ]
-        case V:
+        case .v:
             return [
                 "_____",
                 "_#___",
@@ -117,7 +117,7 @@ public enum Shape: Int {
                 "_###_",
                 "_____"
             ]
-        case W:
+        case .w:
             return [
                 "_____",
                 "_#___",
@@ -126,7 +126,7 @@ public enum Shape: Int {
                 "_____"
                 
             ]
-        case X:
+        case .x:
             return [
                 "_____",
                 "__#__",
@@ -134,7 +134,7 @@ public enum Shape: Int {
                 "__#__",
                 "_____"
             ]
-        case Y:
+        case .y:
             return [
                 "_____",
                 "__#__",
@@ -142,7 +142,7 @@ public enum Shape: Int {
                 "__#__",
                 "__#__"
             ]
-        case Z:
+        case .z:
             return [
                 "_____",
                 "_##__",

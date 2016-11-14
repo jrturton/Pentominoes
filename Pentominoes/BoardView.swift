@@ -1,15 +1,15 @@
 import UIKit
 
-public class BoardView: UIView {
-    private let board: Board
-    public let gridSize: CGFloat
+open class BoardView: UIView {
+    fileprivate let board: Board
+    open let gridSize: CGFloat
     
-    private let highlightLayer: CAShapeLayer = {
+    fileprivate let highlightLayer: CAShapeLayer = {
         $0.anchorPoint = CGPoint(x: 0, y: 0)
-        $0.fillColor = UIColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 0.25).CGColor
-        $0.strokeColor = UIColor.darkGrayColor().CGColor
+        $0.fillColor = UIColor(red: 0.0, green: 1.0, blue: 0.0, alpha: 0.25).cgColor
+        $0.strokeColor = UIColor.darkGray.cgColor
         $0.lineWidth = 4.0
-        $0.hidden = true
+        $0.isHidden = true
         return $0
     }(CAShapeLayer())
     
@@ -19,14 +19,14 @@ public class BoardView: UIView {
         super.init(frame: board.sizeForGridSize(gridSize))
         let gridLayer = CAShapeLayer()
         gridLayer.frame = bounds
-        gridLayer.fillColor = UIColor.whiteColor().CGColor
-        gridLayer.strokeColor = UIColor.lightGrayColor().CGColor
+        gridLayer.fillColor = UIColor.white.cgColor
+        gridLayer.strokeColor = UIColor.lightGray.cgColor
         layer.addSublayer(gridLayer)
         gridLayer.path = boardPath()
         layer.addSublayer(highlightLayer)
     }
     
-    private func boardPath() -> CGPath {
+    fileprivate func boardPath() -> CGPath {
         return board.pathForSquares(false, gridSize: gridSize)
     }
     
@@ -51,21 +51,21 @@ extension BoardView {
         }
     }
     
-    func showDropPathAtOrigin(origin: CGPoint?) {
+    func showDropPathAtOrigin(_ origin: CGPoint?) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         if let origin = origin {
             highlightLayer.position = origin
-            highlightLayer.hidden = false
+            highlightLayer.isHidden = false
         } else {
-            highlightLayer.hidden = true
+            highlightLayer.isHidden = true
         }
         CATransaction.commit()
     }
 }
 
 extension BoardView {
-    public override func hitTest(point: CGPoint, withEvent event: UIEvent?) -> UIView? {
+    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         
         let square = board.squareAtPoint(point, gridSize: gridSize)
         if
@@ -74,7 +74,7 @@ extension BoardView {
             return tileView
         }
         
-        return super.hitTest(point, withEvent: event)
+        return super.hitTest(point, with: event)
     }
     
     var tileViews: [TileView] {

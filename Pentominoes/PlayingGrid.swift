@@ -3,25 +3,25 @@ import UIKit
 public protocol PlayingGrid : CustomStringConvertible, CustomPlaygroundQuickLookable {
     var rows: [[Bool]] { get }
     subscript(row: Int) -> [Bool] { get }
-    func sizeForGridSize(gridSize: CGFloat) -> CGRect
-    func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint
-    func squareAtPoint(point: CGPoint, gridSize: CGFloat) -> Square
+    func sizeForGridSize(_ gridSize: CGFloat) -> CGRect
+    func pointAtOriginOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint
+    func squareAtPoint(_ point: CGPoint, gridSize: CGFloat) -> Square
 }
 
 extension PlayingGrid {
-    public func sizeForGridSize(gridSize: CGFloat) -> CGRect {
+    public func sizeForGridSize(_ gridSize: CGFloat) -> CGRect {
         let height = CGFloat(rows.count)
         let width = CGFloat(rows.first?.count ?? 0)
         return CGRect(origin: .zero, size: CGSize(width: gridSize * width, height: gridSize * height))
     }
     
-    public func pointAtOriginOfSquare(square: Square, gridSize: CGFloat) -> CGPoint {
+    public func pointAtOriginOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint {
         return CGPoint(x: CGFloat(square.column) * gridSize, y: CGFloat(square.row) * gridSize)
     }
-    public func pointAtCenterOfSquare(square: Square, gridSize: CGFloat) -> CGPoint {
+    public func pointAtCenterOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint {
         return CGPoint(x: CGFloat(square.column) * gridSize + gridSize * 0.5, y: CGFloat(square.row) * gridSize * 0.5)
     }
-    public func squareAtPoint(point: CGPoint, gridSize: CGFloat) -> Square {
+    public func squareAtPoint(_ point: CGPoint, gridSize: CGFloat) -> Square {
         let row = Int(floor(point.y / gridSize))
         let column = Int(floor(point.x / gridSize))
         return Square(row: row, column: column)
@@ -34,14 +34,14 @@ extension Bool {
     }
 }
 
-extension PlayingGrid where Self: protocol<CustomStringConvertible, CustomPlaygroundQuickLookable> {
+extension PlayingGrid where Self: CustomStringConvertible & CustomPlaygroundQuickLookable {
     public var description: String {
         let descriptions : [String] = rows.map { row in
             row.reduce("") { string, gridValue in
                 string + gridValue.gridCharacter
             }
         }
-        return descriptions.joinWithSeparator("\n")
+        return descriptions.joined(separator: "\n")
     }
     public func customPlaygroundQuickLook() -> PlaygroundQuickLook {
         return PlaygroundQuickLook(reflecting: description)
@@ -60,7 +60,7 @@ public struct Square {
         self.occupied = occupied
     }
     
-    func offsetBy(square: Square) -> Square {
+    func offsetBy(_ square: Square) -> Square {
         return Square(row: self.row + square.row, column: self.column + square.column)
     }
 }
@@ -73,7 +73,7 @@ public func ==(left: Square, right: Square) -> Bool {
     return left.row == right.row && left.column == right.column
 }
 
-public class GridSquareGenerator: GeneratorType {
+open class GridSquareGenerator: IteratorProtocol {
     var currentRow: Int = 0
     var currentColumn: Int = -1
     
@@ -83,7 +83,7 @@ public class GridSquareGenerator: GeneratorType {
         self.grid = grid
     }
     
-    public func next() -> Square? {
+    open func next() -> Square? {
         guard currentRow < grid.rows.count else { return nil }
         
         currentColumn += 1
@@ -100,14 +100,14 @@ public class GridSquareGenerator: GeneratorType {
     }
 }
 
-public class GridSquareSequence: SequenceType {
+open class GridSquareSequence: Sequence {
     let grid: PlayingGrid
     
     public init(grid: PlayingGrid) {
         self.grid = grid
     }
     
-    public func generate() -> GridSquareGenerator {
+    open func makeIterator() -> GridSquareGenerator {
         return GridSquareGenerator(grid: grid)
     }
 }
@@ -119,7 +119,7 @@ extension PlayingGrid {
     public func occupiedSquares() -> [Square] {
         return squares().filter{ $0.occupied == true }
     }
-    public func squaresSurrounding(square: Square) -> [Square] {
+    public func squaresSurrounding(_ square: Square) -> [Square] {
         let firstSurroundingRow = square.row - 1
         let firstSurroundingColumn = square.column - 1
         
@@ -142,18 +142,18 @@ extension PlayingGrid {
         }
     }
     
-    public func squareWithinGrid(square: Square) -> Bool {
+    public func squareWithinGrid(_ square: Square) -> Bool {
         return square.row >= 0 && square.column >= 0 && square.row < rows.count && square.column < rows[square.row].count
     }
     
-    public func squareOccupied(square: Square) -> Bool {
+    public func squareOccupied(_ square: Square) -> Bool {
         return self[square.row][square.column]
     }
 }
 
 extension PlayingGrid {
     
-    public func pathForSquares(occupied: Bool, gridSize: CGFloat) -> CGPath {
+    public func pathForSquares(_ occupied: Bool, gridSize: CGFloat) -> CGPath {
         
         let squaresForPath = squares().filter { $0.occupied == occupied }
         
@@ -164,11 +164,11 @@ extension PlayingGrid {
         }
         
         let path : UIBezierPath = rects.reduce(UIBezierPath()) { path, rect in
-            path.appendPath(UIBezierPath(rect: rect))
+            path.append(UIBezierPath(rect: rect))
             return path
         }
         
-        return path.CGPath
+        return path.cgPath
     }
 }
 
