@@ -44,16 +44,16 @@ open class Board: PlayingGrid {
 
 extension Board {
     
-    public func allowedDropLocation(_ tile: Tile, atPoint point: CGPoint, gridSize: CGFloat) -> Square? {
-        let potentialSquare = squareAtPoint(point, gridSize: gridSize)
+    public func allowedDropLocation(for tile: Tile, at point: CGPoint, gridSize: CGFloat) -> Square? {
+        let potentialSquare = squareAt(point, gridSize: gridSize)
         var allowedDropLocation: Square?
-        if canPositionTile(tile, atSquare: potentialSquare) {
+        if canPosition(tile, at: potentialSquare) {
             allowedDropLocation = potentialSquare
         } else {
             var distanceToDropPoint = CGFloat.greatestFiniteMagnitude
             for square in squaresSurrounding(potentialSquare) {
-                if canPositionTile(tile, atSquare: square) {
-                    let origin = pointAtOriginOfSquare(square, gridSize: gridSize)
+                if canPosition(tile, at: square) {
+                    let origin = pointAtOriginOf(square, gridSize: gridSize)
                     let xDistance = origin.x - point.x
                     let yDistance = origin.y - point.y
                     // No need to sqrt since we're just comparing
@@ -68,10 +68,10 @@ extension Board {
         return allowedDropLocation
     }
     
-    public func canPositionTile(_ tile: Tile, atSquare: Square) -> Bool {
+    public func canPosition(_ tile: Tile, at square: Square) -> Bool {
         
         for tileSquare in tile.squares() {
-            let boardSquare = tileSquare.offsetBy(atSquare)
+            let boardSquare = tileSquare.offsetBy(square)
             if !squareWithinGrid(boardSquare) {
                 return false
             }
@@ -82,15 +82,15 @@ extension Board {
         return true
     }
     
-    public func positionTile(_ tile: Tile, atSquare square: Square) -> Bool {
-        if !canPositionTile(tile, atSquare: square) {
+    public func position(_ tile: Tile, at square: Square) -> Bool {
+        if !canPosition(tile, at: square) {
             return false
         }
         placedTiles.append(PlacedTile(square: square, tile: tile))
         return true
     }
     
-    public func tileAtSquare(_ square: Square) -> Tile? {
+    public func tileAt(_ square: Square) -> Tile? {
         for placedTile in placedTiles {
             let locationInTile = square.offsetBy(-placedTile.square)
             if placedTile.tile.squareWithinGrid(locationInTile) {
@@ -104,7 +104,7 @@ extension Board {
         return nil
     }
     
-    public func removeTile(_ tile: Tile) -> Tile? {
+    public func remove(_ tile: Tile) -> Tile? {
         if let index = placedTiles.index( where: { $0.tile === tile } ){
             placedTiles.remove(at: index)
             return tile

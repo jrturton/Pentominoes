@@ -4,8 +4,8 @@ public protocol PlayingGrid : CustomStringConvertible, CustomPlaygroundQuickLook
     var rows: [[Bool]] { get }
     subscript(row: Int) -> [Bool] { get }
     func sizeForGridSize(_ gridSize: CGFloat) -> CGRect
-    func pointAtOriginOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint
-    func squareAtPoint(_ point: CGPoint, gridSize: CGFloat) -> Square
+    func pointAtOriginOf(_ square: Square, gridSize: CGFloat) -> CGPoint
+    func squareAt(_ point: CGPoint, gridSize: CGFloat) -> Square
 }
 
 extension PlayingGrid {
@@ -15,13 +15,11 @@ extension PlayingGrid {
         return CGRect(origin: .zero, size: CGSize(width: gridSize * width, height: gridSize * height))
     }
     
-    public func pointAtOriginOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint {
+    public func pointAtOriginOf(_ square: Square, gridSize: CGFloat) -> CGPoint {
         return CGPoint(x: CGFloat(square.column) * gridSize, y: CGFloat(square.row) * gridSize)
     }
-    public func pointAtCenterOfSquare(_ square: Square, gridSize: CGFloat) -> CGPoint {
-        return CGPoint(x: CGFloat(square.column) * gridSize + gridSize * 0.5, y: CGFloat(square.row) * gridSize * 0.5)
-    }
-    public func squareAtPoint(_ point: CGPoint, gridSize: CGFloat) -> Square {
+    
+    public func squareAt(_ point: CGPoint, gridSize: CGFloat) -> Square {
         let row = Int(floor(point.y / gridSize))
         let column = Int(floor(point.x / gridSize))
         return Square(row: row, column: column)
@@ -43,7 +41,7 @@ extension PlayingGrid where Self: CustomStringConvertible & CustomPlaygroundQuic
         }
         return descriptions.joined(separator: "\n")
     }
-    public func customPlaygroundQuickLook() -> PlaygroundQuickLook {
+    public var customPlaygroundQuickLook: PlaygroundQuickLook {
         return PlaygroundQuickLook(reflecting: description)
     }
 }

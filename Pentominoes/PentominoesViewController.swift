@@ -57,18 +57,18 @@ open class PentominoesViewController: UIViewController {
     var activeTile: TileView? {
         willSet {
             if let oldActiveTile = activeTile {
-                oldActiveTile.lifted = false
+                oldActiveTile.isLifted = false
                 oldActiveTile.layer.zPosition = 0
             }
         }
         didSet {
             boardView.dropPath = activeTile?.tile.pathForSquares(true, gridSize: gridSize)
             if let newActiveTile = activeTile {
-                newActiveTile.lifted = true
+                newActiveTile.isLifted = true
                 newActiveTile.layer.zPosition = 10
                 if newActiveTile.superview != view {
                     view.addSubviewPreservingLocation(newActiveTile)
-                    board.removeTile(newActiveTile.tile)
+                    let _ = board.remove(newActiveTile.tile)
                 }
             } 
         }
@@ -83,30 +83,30 @@ open class PentominoesViewController: UIViewController {
         
         guard let activeTile = activeTile else { return }
         var fingerClearedLocation = sender.location(in: view)
-        fingerClearedLocation.y -= (activeTile.bounds.height ?? 0.0) * 0.5
+        fingerClearedLocation.y -= activeTile.bounds.height * 0.5
         switch sender.state {
         case .began:
             UIView.animate(withDuration: 0.1, animations: { activeTile.center = fingerClearedLocation }) 
         case .changed:
             activeTile.center = fingerClearedLocation
             let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
-            if let allowedDropLocation = board.allowedDropLocation(activeTile.tile, atPoint:locationOnBoard, gridSize: gridSize) {
-                let squareOrigin = board.pointAtOriginOfSquare(allowedDropLocation, gridSize: gridSize)
-                boardView.showDropPathAtOrigin(squareOrigin)
+            if let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize) {
+                let squareOrigin = board.pointAtOriginOf(allowedDropLocation, gridSize: gridSize)
+                boardView.showDropPathAt(squareOrigin)
             } else {
-                boardView.showDropPathAtOrigin(nil)
+                boardView.showDropPathAt(nil)
             }
         case .ended, .cancelled:
             let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
-            let allowedDropLocation = board.allowedDropLocation(activeTile.tile, atPoint:locationOnBoard, gridSize: gridSize)
+            let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize)
             
             self.activeTile = nil
             
             if let allowedDropLocation = allowedDropLocation {
-                board.positionTile(activeTile.tile, atSquare: allowedDropLocation)
+                let _ = board.position(activeTile.tile, at: allowedDropLocation)
                 boardView.addSubviewPreservingLocation(activeTile)
                 UIView.animate(withDuration: 0.1, animations: {
-                    activeTile.frame.origin = self.board.pointAtOriginOfSquare(allowedDropLocation, gridSize: self.gridSize)
+                    activeTile.frame.origin = self.board.pointAtOriginOf(allowedDropLocation, gridSize: self.gridSize)
                 }) 
             } else {
                 UIView.animate(withDuration: 0.25, animations: {

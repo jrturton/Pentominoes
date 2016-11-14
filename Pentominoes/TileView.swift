@@ -39,12 +39,12 @@ open class TileView: UIView {
         })
     }
     
-    open var lifted: Bool = false {
+    open var isLifted: Bool = false {
         didSet {
             layer.shadowRadius = 5.0
             layer.shadowOffset = .zero
             layer.shadowColor = UIColor.black.cgColor
-            layer.shadowOpacity = lifted ? 0.5 : 0.0
+            layer.shadowOpacity = isLifted ? 0.5 : 0.0
         }
     }
 }

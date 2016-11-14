@@ -51,7 +51,7 @@ extension BoardView {
         }
     }
     
-    func showDropPathAtOrigin(_ origin: CGPoint?) {
+    func showDropPathAt(_ origin: CGPoint?) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
         if let origin = origin {
@@ -67,9 +67,9 @@ extension BoardView {
 extension BoardView {
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         
-        let square = board.squareAtPoint(point, gridSize: gridSize)
+        let square = board.squareAt(point, gridSize: gridSize)
         if
-            let tile = board.tileAtSquare(square),
+            let tile = board.tileAt(square),
             let tileView = (tileViews.filter{ $0.tile.shape == tile.shape }).first {
             return tileView
         }
