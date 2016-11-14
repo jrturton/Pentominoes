@@ -2,11 +2,11 @@ import UIKit
 
 open class PentominoesViewController: UIViewController {
     
-    //MARK: Outlets
+    //MARK: - Outlets
     @IBOutlet var tap: UITapGestureRecognizer!
     @IBOutlet var pan: UIPanGestureRecognizer!
     
-    //MARK: Properties
+    //MARK: - Properties
     fileprivate let gridSize: CGFloat = 35
     var boardView: BoardView!
     var tileViews: [TileView]!
@@ -21,7 +21,7 @@ open class PentominoesViewController: UIViewController {
         }
     }
     
-    //MARK: UIViewController
+    //MARK: - UIViewController
     open override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,6 +35,65 @@ open class PentominoesViewController: UIViewController {
         positionTiles()
     }
     
+    //MARK: - Actions
+    @IBAction func reset(_ sender: Any) {
+        let alert = UIAlertController(title: "Reset", message: "Start again?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { _ in
+            self.resetGame()
+        })
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    @IBAction func recolour(_ sender: Any) {
+        self.tileViews.forEach { $0.randomiseColor() }
+    }
+    
+    @IBAction func handleTap(_ sender: UITapGestureRecognizer) {
+        activeTile?.rotate(true)
+        boardView.dropPath = activeTile?.tile.pathForSquares(true, gridSize: gridSize)
+    }
+    
+    @IBAction func handlePan(_ sender: UIPanGestureRecognizer) {
+        
+        guard let activeTile = activeTile else { return }
+        var fingerClearedLocation = sender.location(in: view)
+        fingerClearedLocation.y -= activeTile.bounds.height * 0.5
+        switch sender.state {
+        case .began:
+            UIView.animate(withDuration: 0.1, animations: { activeTile.center = fingerClearedLocation })
+        case .changed:
+            activeTile.center = fingerClearedLocation
+            let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
+            if let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize) {
+                let squareOrigin = board.pointAtOriginOf(allowedDropLocation, gridSize: gridSize)
+                boardView.showDropPathAt(squareOrigin)
+            } else {
+                boardView.showDropPathAt(nil)
+            }
+        case .ended, .cancelled:
+            let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
+            let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize)
+            
+            self.activeTile = nil
+            
+            if let allowedDropLocation = allowedDropLocation {
+                let _ = board.position(activeTile.tile, at: allowedDropLocation)
+                boardView.addSubviewPreservingLocation(activeTile)
+                UIView.animate(withDuration: 0.1, animations: {
+                    activeTile.frame.origin = self.board.pointAtOriginOf(allowedDropLocation, gridSize: self.gridSize)
+                })
+            } else {
+                UIView.animate(withDuration: 0.25, animations: {
+                    self.positionTiles()
+                })
+            }
+        default:
+            break
+        }
+    }
+    
+    //MARK: - Game logic
     fileprivate func positionTiles() {
         for (index, tileView) in tileViews.enumerated() {
             if tileView.superview != view || tileView == activeTile {
@@ -73,21 +132,8 @@ open class PentominoesViewController: UIViewController {
                     view.addSubviewPreservingLocation(newActiveTile)
                     let _ = board.remove(newActiveTile.tile)
                 }
-            } 
+            }
         }
-    }
-    
-    @IBAction func reset(_ sender: Any) {
-        let alert = UIAlertController(title: "Reset", message: "Start again?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Reset", style: .destructive) { _ in
-            self.resetGame()
-        })
-        self.present(alert, animated: true, completion: nil)
-    }
-    
-    @IBAction func recolour(_ sender: Any) {
-        self.tileViews.forEach { $0.randomiseColor() }
     }
     
     private func resetGame() {
@@ -103,51 +149,9 @@ open class PentominoesViewController: UIViewController {
         }, completion: nil)
     }
     
-    @IBAction func handleTap(_ sender: UITapGestureRecognizer) {
-        activeTile?.rotate(true)
-        boardView.dropPath = activeTile?.tile.pathForSquares(true, gridSize: gridSize)
-    }
-    
-    @IBAction func handlePan(_ sender: UIPanGestureRecognizer) {
-        
-        guard let activeTile = activeTile else { return }
-        var fingerClearedLocation = sender.location(in: view)
-        fingerClearedLocation.y -= activeTile.bounds.height * 0.5
-        switch sender.state {
-        case .began:
-            UIView.animate(withDuration: 0.1, animations: { activeTile.center = fingerClearedLocation }) 
-        case .changed:
-            activeTile.center = fingerClearedLocation
-            let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
-            if let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize) {
-                let squareOrigin = board.pointAtOriginOf(allowedDropLocation, gridSize: gridSize)
-                boardView.showDropPathAt(squareOrigin)
-            } else {
-                boardView.showDropPathAt(nil)
-            }
-        case .ended, .cancelled:
-            let locationOnBoard = boardView.convert(activeTile.bounds.origin, from: activeTile)
-            let allowedDropLocation = board.allowedDropLocation(for: activeTile.tile, at:locationOnBoard, gridSize: gridSize)
-            
-            self.activeTile = nil
-            
-            if let allowedDropLocation = allowedDropLocation {
-                let _ = board.position(activeTile.tile, at: allowedDropLocation)
-                boardView.addSubviewPreservingLocation(activeTile)
-                UIView.animate(withDuration: 0.1, animations: {
-                    activeTile.frame.origin = self.board.pointAtOriginOf(allowedDropLocation, gridSize: self.gridSize)
-                }) 
-            } else {
-                UIView.animate(withDuration: 0.25, animations: {
-                    self.positionTiles()
-                }) 
-            }
-        default:
-            break
-        }
-    }
 }
 
+//MARK: - Gesture recogniser delegate
 extension PentominoesViewController: UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
