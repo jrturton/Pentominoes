@@ -32,7 +32,7 @@ extension Bool {
     }
 }
 
-extension PlayingGrid where Self: CustomStringConvertible & CustomPlaygroundQuickLookable {
+extension PlayingGrid {
     public var description: String {
         let descriptions : [String] = rows.map { row in
             row.reduce("") { string, gridValue in
